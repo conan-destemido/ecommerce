@@ -1,6 +1,7 @@
-</php
+<?php
 
-	namespace hcode;
+
+	namespace Hcode;
 	
 	use Rain\Tpl;
 	
@@ -8,13 +9,13 @@
 		
 		private $tpl;
 		private $options = [];
-		private $defaouts = [
+		private $defaults = [
 			"data"=>[]
 		];
 		
 		public function __construct($opts = array()){
 			
-			$this->options = array_merge($this->defaults, $opts)
+			$this->options = array_merge($this->defaults, $opts);
 			// config
 			$config = array(
 				"tpl_dir"       => $_SERVER["DOCUMENT_ROOT"]."/views/",

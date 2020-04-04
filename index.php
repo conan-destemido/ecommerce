@@ -3,7 +3,7 @@
 require_once("vendor/autoload.php");
 
 use \Slim\Slim;
-use \hcode\Page;
+use \Hcode\Page;
 
 $app = new Slim();
 
