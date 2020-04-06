@@ -19,7 +19,7 @@
 			
 			if(count($results) === 0)
 			{
-				throw new \Exception("Usuário inexistente ou senha inválida.");
+				throw new \Exception("Usuário inexistente ou senha inválida. (login inválido)");
 			}
 			
 			$data = $results[0];
@@ -29,35 +29,32 @@
 				
 				$user = new User();
 				
-				$user->setIduser($data["iduser"]);
-
-				$_SESSION[User::SESSION] = getValues();
+				$user->setData($data);
+				
+				$_SESSION[SESSION] = $user->getValues();
 				
 				return $user;
 				
 			}else{
 				
-				throw new \Exception("Usuário inexistente ou senha inválida.");
+				throw new \Exception("Usuário inexistente ou senha inválida. (senha inválida)");
 				
 			}
 			
-			public function getValues()
-			{
-				return $this->values;
-			}
+
 		}
 		
 		public static function verifyLogin($inadmin = true)
 		{
-			
+
 			if(
-				!isset($_SESSION[User::SESSION])
+				!isset($_SESSION[SESSION])
 				||
-				|$_SESSION[User::SESSION]
+				!$_SESSION[SESSION]
 				||
-				!(int)$_SESSION[User::SESSION]["iduser"] > 0
+				!(int)$_SESSION[SESSION]["iduser"] > 0
 				||
-				(bool)$_SESSION[User::SESSION]["inadmin"] !== $inadmin
+				(bool)$_SESSION[SESSION]["inadmin"] !== $inadmin
 			){
 				header("Location: /admin/login");
 				exit;
@@ -66,7 +63,7 @@
 		
 		public static function logout()
 		{
-			$_SESSION[User::SESSION] = NULL;
+			$_SESSION[SESSION] = NULL;
 		}
 	}
 ?>

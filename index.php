@@ -42,7 +42,7 @@ $app->get('/admin/login', function() {
 	
 });
 
-$app->post("admin/login", function(){
+$app->post("/admin/login", function(){
 	
 	User::login($_POST["login"], $_POST["password"]);
 	
@@ -56,6 +56,29 @@ $app->get("/admin/logout", function(){
 	
 	header("Location: /admin/login");
 	exit;
+});
+
+$app->post("/admin/users/create", function () {
+
+ 	User::verifyLogin();
+
+	$user = new User();
+
+ 	$_POST["inadmin"] = (isset($_POST["inadmin"])) ? 1 : 0;
+
+ 	$_POST['despassword'] = password_hash($_POST["despassword"], PASSWORD_DEFAULT, [
+
+ 		"cost"=>12
+
+ 	]);
+
+ 	$user->setData($_POST);
+
+	$user->save();
+
+	header("Location: /admin/users");
+ 	exit;
+
 });
 
 $app->run();
