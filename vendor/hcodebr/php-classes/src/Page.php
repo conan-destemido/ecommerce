@@ -27,7 +27,7 @@
 				"debug"         => false // set to false to improve the speed
 		   );
 
-			Tpl::configure( $config );			
+			Tpl::configure( $config );
 			
 			$this->tpl = new Tpl;
 			
