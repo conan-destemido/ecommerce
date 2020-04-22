@@ -20,7 +20,7 @@
 		
 		public function save()
 		{
-		
+			
 			$sql = new Sql();
 			
 			$results = $sql->select("CALL sp_categories_save(:idcategory, :descategory)", 
@@ -28,7 +28,7 @@
 				":idcategory"=>$this->getidcategory(),
 				":descategory"=>$this->getdescategory()
 			)); 
-
+			
 			$this->setData($results[0]);
 			
 			Category::updateFile();

@@ -8,6 +8,7 @@
 		
 		public function __call($name, $args)
 		{
+			
 			$method = substr($name, 0, 3);
 			$fieldname = substr($name, 3, strlen($name));
 			
@@ -24,6 +25,7 @@
 		
 		public function setData($data = array())
 		{
+			
 			foreach($data as $key => $value){
 				
 				$this->{"set".$key}($value);

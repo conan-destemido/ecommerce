@@ -24,12 +24,14 @@ class Sql {
 
 	private function setParams($statement, $parameters = array())
 	{
+
 		
 		foreach ($parameters as $key => $value) {
 
 			$this->bindParam($statement, $key, $value);
 			
 		}
+
 
 	}
 
