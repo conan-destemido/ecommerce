@@ -11,16 +11,27 @@ use \Hcode\Model\User;
 use \Hcode\Model\Category;
 use \Hcode\Model\Product;
 
+function formatPrice(float $vlPrice)
+{
+	
+	return number_format($vlPrice, 2, ",", ".");
+	
+}
+
 $app = new Slim();
 
 $app->config('debug', true);
 
 // ROTA PARA O ARQUIVO PRINCIPAL DO SITE 
 $app->get('/', function() {
+	
+	$products = Product::listAll();
 
 	$page = new Page();
 	
-	$page->setTpl("index");
+	$page->setTpl("index", [
+		"products"=>Product::checkList($products)
+	]);
 	
 });
 
