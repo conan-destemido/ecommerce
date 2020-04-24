@@ -21,8 +21,9 @@ function formatPrice(float $vlPrice)
 $app = new Slim();
 
 $app->config('debug', true);
-
+//////////////////////////////////////////////////////////////////////////
 // ROTA PARA O ARQUIVO PRINCIPAL DO SITE 
+//////////////////////////////////////////////////////////////////////////
 $app->get('/', function() {
 	
 	$products = Product::listAll();
@@ -67,7 +68,27 @@ $app->get("/categories/:idcategory", function($idcategory){
 	
 });
 
+// Rota para exibir os detalhes do produto
+$app->get("/products/:desurl", function($desurl){
+	
+	$product = new Product();
+	
+	$product->getFromURL($desurl);
+	
+	$page = new Page();
+	
+	$page->setTpl("product-detail", [
+		"product"=>$product->getValues(),
+		"categories"=>$product->getCategories()
+	]);
+	
+});
+
+// F I M  PARA ROTAS DO SITE
+
+///////////////////////////////////////////////////////////////////
 // ROTA PARA OS ARQUIVOS DO ADMIN
+///////////////////////////////////////////////////////////////////
 
 $app->get('/admin', function() {
 	
