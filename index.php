@@ -34,6 +34,20 @@ $app->get('/', function() {
 	]);
 	
 });
+// Rota para exibir no site a categoria de um produto
+$app->get("/categories/:idcategory", function($idcategory){
+	
+	$category = new Category();
+	
+	$category->get((int)$idcategory);
+	
+	$page = new Page();
+	
+	$page->setTpl("category", [
+		"category"=>$category->getValues(),
+		"products"=>Product::checkList($category->getProducts())
+	]);
+});
 
 // ROTA PARA OS ARQUIVOS DO ADMIN
 
@@ -351,18 +365,63 @@ $app->post("/admin/categories/:idcategory", function($idcategory){
 	
 });
 
-$app->get("/categories/:idcategory", function($idcategory){
-
+// Rota da página de relacionamento de produtos com categoria
+$app->get("/admin/categories/:idcategory/products", function($idcategory){
+	
+	User::verifyLogin();
+	
 	$category = new Category();
 	
 	$category->get((int)$idcategory);
 	
-	$page = new Page();
+	$page = new PageAdmin();
 	
-	$page->setTpl("category", [
+	$page->setTpl("categories-products", [
 		"category"=>$category->getValues(),
-		"products"=>[]
+		"productsRelated"=>$category->getProducts(true),
+		"productsNotRelated"=>$category->getProducts(false)
 	]);
+});
+
+// Rota do menu categorias para categorizar (adicionar em uma categoria) um produto
+$app->get("/admin/categories/:idcategory/products/:idproduct/add", function($idcategory, $idproduct){
+	
+	User::verifyLogin();
+	
+	$category = new Category();
+	
+	$category->get((int)$idcategory);
+
+	$product = new Product();
+	
+	$product->get((int)$idproduct);
+	
+	$category->addProduct($product);
+	
+	header("Location: /admin/categories/".$idcategory."/products");
+	
+	exit;
+	
+});
+
+// Rota do menu categorias para descategorizar um produto (remover um produto de uma categoria) 
+$app->get("/admin/categories/:idcategory/products/:idproduct/remove", function($idcategory, $idproduct){
+	
+	User::verifyLogin();
+	
+	$category = new Category();
+	
+	$category->get((int)$idcategory);
+
+	$product = new Product();
+	
+	$product->get((int)$idproduct);
+	
+	$category->removeProduct($product);
+	
+	header("Location: /admin/categories/".$idcategory."/products");
+
+	exit;	
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -464,6 +523,7 @@ $app->get("/admin/products/:idproduct/delete", function($idproduct){
 	exit;
 	
 });
+
 
 $app->run();
 
