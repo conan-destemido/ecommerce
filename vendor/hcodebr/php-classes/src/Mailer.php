@@ -7,7 +7,7 @@
 	class Mailer {
 		
 		const USERNAME  = "fernando.t.araujo2020@gmail.com";
-		const PASSWORD  = "agoraVaiFuncionarPorra!!!";
+		const PASSWORD  = "";
 		const NAME_FROM = "ACHEI CHEI HEI EI I!";
 		
 		private $email;

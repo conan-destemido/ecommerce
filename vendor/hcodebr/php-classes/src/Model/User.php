@@ -6,15 +6,16 @@
 	use \Hcode\Model;
 	use \Hcode\Mailer;
 	
-	
+	define("SECRET"   , pack("a16", "BomMercadoAchei"));
+	define("SECRET_IV", pack("a16", "BomMercadoAchei"));
 	
 	class User extends Model {
 		
 		const SESSION = "User";
-		//define("SECRET"   , pack("a16", "BomMercadoAchei"));
-		//define("SECRET_IV", pack("a16", "BomMercadoAchei"));
-		const SECRET 	= "BomMercadoAcheii";
-		const SECRET_IV = "BomMercadoAcheii";
+		
+		//
+		//const SECRET 	= "BomMercadoAcheii";
+		//const SECRET_IV = "BomMercadoAcheii";
 		const ERROR = 'UserError';
 		const ERROR_REGISTER = 'UserErrorRegister';
 				
@@ -52,7 +53,7 @@
 					
 			}else{
 			
-				if($inadmin === true && (bool)$_SESSION[User::SESSION]["idadmin"] === true){
+				if($inadmin === true && (bool)$_SESSION[User::SESSION]["inadmin"] === true){
 					
 					return true;
 					
@@ -208,7 +209,7 @@
 			
 		}
 		
-		public static function getForgot($email){
+		public static function getForgot($email, $inadmin = true){
 			
 			$sql = new Sql();
 			
@@ -261,7 +262,16 @@
 						$code = openssl_decrypt($code, "AES-128-CBC", SECRET, 0, SECRET_IV);
 					*/
 
-					$link = "http://www.hcodecommerce.com.br/admin/forgot/reset?code=$code";
+					if($inadmin === true)
+					{
+						
+						$link = "http://www.hcodecommerce.com.br/admin/forgot/reset?code=$code";
+					
+					}else{
+					
+						$link = "http://www.hcodecommerce.com.br/forgot/reset?code=$code";
+					
+					}
 					
 					$mailer = new Mailer($data["desemail"], $data["desperson"], "Redefinir senha", "forgot",
 						array(
