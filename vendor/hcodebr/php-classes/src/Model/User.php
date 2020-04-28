@@ -6,12 +6,18 @@
 	use \Hcode\Model;
 	use \Hcode\Mailer;
 	
-	define("SECRET_IV", pack("a16", "BomMercadoAchei"));
-	define("SECRET"   , pack("a16", "BomMercadoAchei"));	
+	
 	
 	class User extends Model {
 		
 		const SESSION = "User";
+		//define("SECRET"   , pack("a16", "BomMercadoAchei"));
+		//define("SECRET_IV", pack("a16", "BomMercadoAchei"));
+		const SECRET 	= "BomMercadoAcheii";
+		const SECRET_IV = "BomMercadoAcheii";
+		const ERROR = 'UserError';
+		const ERROR_REGISTER = 'UserErrorRegister';
+				
 		
 		public static function getFromSession()
 		{
@@ -33,12 +39,12 @@
 		{
 			
 			if(
-				$_SESSION[User::SESSION]
+				!isset($_SESSION[User::SESSION])
 				||
 				!$_SESSION[User::SESSION]
 				||
 				!(int)$_SESSION[User::SESSION]["iduser"] > 0 
-			)
+				)
 			{
 				
 				// Não está logado
@@ -68,7 +74,11 @@
 		{
 			$sql = new Sql();
 			
-			$results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :LOGIN", array(
+			$results = $sql->select("
+				SELECT * 
+				FROM tb_users a
+				INNER JOIN tb_persons b ON a.idperson = b.idperson
+				WHERE deslogin = :LOGIN", array(
 				":LOGIN"=>$login
 			));
 			
@@ -84,10 +94,12 @@
 				
 				$user = new User();
 				
+				$data['desperson'] = utf8_encode($data['desperson']);
+				
 				$user->setData($data);
 				
 				$_SESSION[User::SESSION] = $user->getValues();
-				
+
 				return $user;
 				
 			}else{
@@ -102,11 +114,16 @@
 		public static function verifyLogin($inadmin = true)
 		{
 
-			if(User::checkLogin($inadmin)) 
-			{
-				header("Location: /admin/login");
-				exit;
+			if(!User::checkLogin($inadmin)) {
+	 
+				if ($inadmin){
+					header("Location: /admin/login");
+				} else {
+					header("Location: /login");
+				}
+
 			}
+		
 		}
 		
 		public static function logout()
@@ -131,9 +148,9 @@
 			
 			$results = $sql->select("CALL sp_users_save(:pdesperson, :pdeslogin, :pdespassword, :pdesemail, :pnrphone, :pinadmin)", 
 				array(
-				":pdesperson"=>$this->getdesperson(),
+				":pdesperson"=>utf8_decode($this->getdesperson()),
 				":pdeslogin"=>$this->getdeslogin(),
-				":pdespassword"=>$this->getdespassword(),
+				":pdespassword"=>User::getPasswordHash($this->getdespassword()),
 				":pdesemail"=>$this->getdesemail(),
 				":pnrphone"=>$this->getnrphone(),
 				":pinadmin"=>$this->getinadmin()
@@ -152,6 +169,10 @@
 				":iduser"=>$iduser
 			));
 			
+			$data = $results[0];
+			
+			$data['desperson'] = utf8_encode($data['desperson']);
+			
 			$this->setData($results[0]);
 			
 		}
@@ -164,9 +185,9 @@
 			$results = $sql->select("CALL sp_usersupdate_save(:piduser, :pdesperson, :pdeslogin, :pdespassword, :pdesemail, :pnrphone, :pinadmin)", 
 				array(
 				":piduser"=>$this->getiduser(),
-				":pdesperson"=>$this->getdesperson(),
+				":pdesperson"=>utf8_decode($this->getdesperson()),
 				":pdeslogin"=>$this->getdeslogin(),
-				":pdespassword"=>$this->getdespassword(),
+				":pdespassword"=>User::getPasswordHash($this->getdespassword()),
 				":pdesemail"=>$this->getdesemail(),
 				":pnrphone"=>$this->getnrphone(),
 				":pinadmin"=>$this->getinadmin()
@@ -312,9 +333,49 @@
 				":password"=>$password,
 				":iduser"=>$this->getiduser()
 			));
+	
+		}
+		
+		public static function setError($msg)
+		{
 			
-			
+			$_SESSION[User::ERROR] = $msg;
 			
 		}
+		
+		public static function getError()
+		{
+			
+			$msg = (isset($_SESSION[User::ERROR]) && $_SESSION[User::ERROR]) ? $_SESSION[User::ERROR] : '';
+			
+			User::clearError();
+			
+			return $msg;
+			
+		}
+		
+		public static function clearError()
+		{
+			
+			$_SESSION[User::ERROR] = NULL;
+			
+		}
+		
+		public static function setErrorRegister($msg)
+		{
+			
+			$_SESSION[User::ERROR_REGISTER] = $msg;
+			
+		}
+		
+		public static function getPasswordHash($password)
+		{
+			
+			return password_hash($password, PASSWORD_DEFAULT, [
+				'cost'=>12
+			]);
+			
+		}
+		
 	}
 ?>

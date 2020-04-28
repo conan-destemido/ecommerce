@@ -330,6 +330,8 @@
 		
 		public function getCalculateTotal()
 		{
+			/*
+			IMPLEMENTADO PELOS PROFESSORES
 			
 			$this->updateFreight();
 			
@@ -337,6 +339,24 @@
 			
 			$this->setvlsubtotal($totals['vlprice']);
 			$this->setvltotal($totals['vlprice'] + $this->getvlfreight());
+			*/
+			
+			// Sugerido por aluno para zerar o subtotal e o total
+			$this->updateFreight();
+
+			$totals = $this->getProductsTotals();
+
+			if ((int)$totals['nrqtd'] > 0){
+				$this->setvlsubtotal($totals['vlprice']);
+				$this->setvltotal($totals['vlprice'] + $this->getvlfreight());
+			} else {
+				$this->setvlfreight(0); // Implementado por mim
+				$this->setvlsubtotal(0);
+				$this->setvltotal(0);
+				$this->setnrdays(0);
+				return Cart::setMsgError("Carrinho de Compra não possui itens!");
+			}
+	
 
 		}
 	}
