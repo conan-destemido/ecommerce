@@ -30,6 +30,7 @@
 				
 				$cart->get((int)$_SESSION[Cart::SESSION]["idcart"]);
 				
+				
 			} else {
 				
 				$cart->getFromSessionId();
@@ -261,8 +262,6 @@
 				$this->setnrdays($result->PrazoEntrega);
 				$this->setvlfreight(Cart::formatValueToDecimal($result->Valor));
 				$this->setdeszipcode($nrzipcode);
-				
-				
 				
 				$this->save();
 				
