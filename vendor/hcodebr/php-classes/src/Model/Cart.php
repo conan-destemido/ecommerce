@@ -355,7 +355,13 @@
 				$this->setnrdays(0);
 				return Cart::setMsgError("Carrinho de Compra não possui itens!");
 			}
-	
+		}
+
+		public function removeSession()
+		{
+
+			$_SESSION[Cart::SESSION] = NULL;
+			session_regenerate_id();
 
 		}
 	}
