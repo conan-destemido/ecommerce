@@ -6,8 +6,8 @@
 	use \Hcode\Model;
 	use \Hcode\Mailer;
 	
-	define("SECRET"   , pack("a16", "BomMercadoAchei"));
-	define("SECRET_IV", pack("a16", "BomMercadoAchei"));
+	define("SECRET"   , pack("a16", "BomMercadoAcheii"));
+	define("SECRET_IV", pack("a16", "BomMercadoAcheii"));
 	
 	class User extends Model {
 		
@@ -18,6 +18,7 @@
 		//const SECRET_IV = "BomMercadoAcheii";
 		const ERROR = 'UserError';
 		const ERROR_REGISTER = 'UserErrorRegister';
+		const SUCCESS = "UserSuccess";
 				
 		
 		public static function getFromSession()
@@ -89,7 +90,7 @@
 			}
 			
 			$data = $results[0];
-			
+
 			if(password_verify($password, $data["despassword"]) === true)
 			{
 				
@@ -367,10 +368,34 @@
 		public static function clearError()
 		{
 			
-			$_SESSION[User::ERROR] = NULL;
+			$_SESSION[User::SUCCESS] = NULL;
 			
 		}
 		
+		public static function setSuccess($msg)
+		{
+			
+			$_SESSION[User::SUCCESS] = $msg;
+			
+		}
+		
+		public static function getSuccess()
+		{
+			
+			$msg = (isset($_SESSION[User::SUCCESS]) && $_SESSION[User::SUCCESS]) ? $_SESSION[User::SUCCESS] : '';
+			
+			User::clearError();
+			
+			return $msg;
+			
+		}
+		
+		public static function clearSuccess()
+		{
+			
+			$_SESSION[User::SUCCESS] = NULL;
+			
+		}		
 		public static function setErrorRegister($msg)
 		{
 			
@@ -398,7 +423,7 @@
 		
 		public static function checkLoginExist($login)
 		{
-			
+
 			$sql = new Sql();
 			
 			$result = $sql->select("

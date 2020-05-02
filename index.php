@@ -2,7 +2,7 @@
 
 session_start();
 
-require_once("vendor/autoload.php");
+require_once("vendor/autoload.php"); 
 
 use \Hcode\Page;
 use \Slim\Slim;
@@ -13,7 +13,7 @@ use \Hcode\Model\Product;
 use \Hcode\Model\Cart;
 use \Hcode\Model\Address;
 
-function formatPrice($vlPrice)
+function formatPrice($vlPrice)    
 {
 	
 	return number_format($vlPrice, 2, ",", ".");
@@ -308,44 +308,6 @@ $app->post("/register", function(){
 });
 
 // Rotas para "Esqueci a senha" para usuários comuns
-/*
-$app->get('/admin', function() {
-	
-	User::verifyLogin();
-
-	$page = new PageAdmin();
-	
-	$page->setTpl("index");
-	
-});
-
-$app->get('/admin/login', function(){
-
-	$page = new PageAdmin([
-		"header"=>false,
-		"footer"=>false
-	]);
-	
-	$page->setTpl("login");
-	
-});
-
-$app->post("/admin/login", function(){
-	
-	User::login($_POST["login"], $_POST["password"]);
-	
-	header("Location: /admin");
-	exit;
-});
-
-$app->get("/admin/logout", function(){
-	
-	User::logout();
-	
-	header("Location: /admin/login");
-	exit;
-}); *////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 // Rota para a página "esqueci a senha" para usuário comuns
 // enviando para a página de login.
 // Nesta página tem a entrada para preencher com email.
@@ -413,6 +375,73 @@ $app->post("/forgot/reset", function(){
 	$page->setTpl("forgot-reset-success");	
 	
 });
+
+
+$app->get("/profile", function(){
+	
+	User::verifyLogin(false);
+	
+	$user = User::getFromSession();
+
+	$page = new Page();
+	
+	$page->setTpl("profile", [
+		'user'=>$user->getValues(),
+		'profileMsg'=>User::getSuccess(),
+		'profileError'=>User::getError()
+	]);
+	
+});
+
+
+$app->post("/profile", function(){
+	
+	User::verifyLogin(false);
+
+	if(!isset($_POST['desperson']) || $_POST['desperson'] === ''){
+
+		User::setError("Preencha o seu nome.");
+		header('Location: /profile');
+		exit;
+
+	}	
+
+	if(!isset($_POST['desemail']) || $_POST['desemail'] === ''){
+		User::setError("Preencha o seu email.");
+		header('Location: /profile');
+		exit;
+	}	
+	
+	$user = User::getFromSession();
+	
+	if($_POST['desemail'] !== $user->getdesemail()){
+
+		if(User::checkLoginExist($_POST['desemail']) === true )
+		{
+			User::setError("Este endereço de e-mail já está cadastrado.");
+			header('Location: /profile');
+			exit;
+		}
+	}
+
+	User::setError("");
+
+	$_SESSION['inadmin'] = $user->getinadmin();
+	$_SESSION['despassword'] = $user->getdespassword();
+	$_SESSION['deslogin'] = $_POST['desemail'];
+
+	$user->setData($_POST);
+	
+	$user->save();
+
+	User::setSuccess('Dados alterados com sucesso!');
+	
+	header("Location: /profile");
+	
+	exit;
+	
+});
+
 // F I M  PARA ROTAS DO SITE
 
 ///////////////////////////////////////////////////////////////////
@@ -441,7 +470,7 @@ $app->get('/admin/login', function(){
 });
 
 $app->post("/admin/login", function(){
-	
+
 	User::login($_POST["login"], $_POST["password"]);
 	
 	header("Location: /admin");
