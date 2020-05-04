@@ -74,6 +74,7 @@
 		
 		public static function login($login, $password)
 		{
+
 			$sql = new Sql();
 			
 			$results = $sql->select("
@@ -103,7 +104,7 @@
 				$_SESSION[User::SESSION] = $user->getValues();
 
 				return $user;
-				
+
 			}else{
 				
 				throw new \Exception("Usuário inexistente ou senha inválida. (senha inválida)");
@@ -368,7 +369,7 @@
 		public static function clearError()
 		{
 			
-			$_SESSION[User::SUCCESS] = NULL;
+			$_SESSION[User::ERROR] = NULL;
 			
 		}
 		
@@ -465,7 +466,7 @@
 			]);			
 
 			return $results;
-			
+
 		}
 		
 	}

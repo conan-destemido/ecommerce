@@ -20,14 +20,14 @@
             </div>
             <div class="col-md-9">
                 {if="$profileMsg != ''"}
-                <div class="alert alert-success">
-                    {$profileMsg}
-                </div>
+                    <div class="alert alert-success">
+                        {$profileMsg}
+                    </div>
                 {/if}
                 {if="$profileError != ''"}
-                <div class="alert alert-danger">
-                    {$profileError}
-                </div>
+                    <div class="alert alert-danger">
+                        {$profileError}
+                    </div>
                 {/if}                
                 <form method="post" action="/profile">
                     <div class="form-group">
