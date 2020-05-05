@@ -1,8 +1,7 @@
 <?php
 
-use \Hcode\PageAdmin;
-use \Hcode\Model\User;
 
+// ROTA PARA OS ARQUIVOS DO ADMIN USERS
 $app->get("/admin/users", function(){
 	
 	User::verifyLogin();

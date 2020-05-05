@@ -81,13 +81,15 @@
 				SELECT * 
 				FROM tb_users a
 				INNER JOIN tb_persons b ON a.idperson = b.idperson
-				WHERE deslogin = :LOGIN", array(
+				WHERE a.deslogin = :LOGIN", array(
 				":LOGIN"=>$login
 			));
 			
 			if(count($results) === 0)
 			{
+
 				throw new \Exception("Usuário inexistente ou senha inválida. (login inválido)");
+
 			}
 			
 			$data = $results[0];
@@ -103,13 +105,16 @@
 				
 				$_SESSION[User::SESSION] = $user->getValues();
 
-				return $user;
+				//return $user;
+				return "";
 
 			}else{
 				
 				throw new \Exception("Usuário inexistente ou senha inválida. (senha inválida)");
 				
 			}
+
+			return "";
 			
 
 		}

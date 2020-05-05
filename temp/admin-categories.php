@@ -1,9 +1,7 @@
 <?php
 
-use \Hcode\PageAdmin;
-use \Hcode\Model\User;
-use \Hcode\Model\Category;
-
+//////////////////////////////////////////////////////////////////////////////
+// ROTA PARA OS ARQUIVOS DAS CATEGORIAS
 // Rota para acessar as categorias
 $app->get("/admin/categories", function(){
 	
@@ -18,7 +16,7 @@ $app->get("/admin/categories", function(){
 	]);	
 	
 });
-
+// Rora da página de inclusão das categorias
 $app->get("/admin/categories/create", function(){
 	
 	User::verifyLogin();
@@ -28,7 +26,7 @@ $app->get("/admin/categories/create", function(){
 	$page->setTpl("categories-create");
 	
 });
-
+// Rota para incluir uma categoria após o submit da página categories-create
 $app->post("/admin/categories/create", function(){
 	
 	User::verifyLogin();
@@ -44,7 +42,7 @@ $app->post("/admin/categories/create", function(){
 	exit;
 
 });
-
+// Rota pra excluir um registro de uma categoria
 $app->get("/admin/categories/:idcategory/delete", function($idcategory){
 	
 	User::verifyLogin();
@@ -60,7 +58,7 @@ $app->get("/admin/categories/:idcategory/delete", function($idcategory){
 	exit;
 	
 });
-
+// Rota para a página de edição para atualizar um registro de categoria
 $app->get("/admin/categories/:idcategory", function($idcategory){
 	
 	User::verifyLogin();
@@ -76,7 +74,7 @@ $app->get("/admin/categories/:idcategory", function($idcategory){
 	]);
 	
 });
-
+// Rota pra atualizar um registro de categoria
 $app->post("/admin/categories/:idcategory", function($idcategory){
 	
 	User::verifyLogin();
@@ -95,20 +93,63 @@ $app->post("/admin/categories/:idcategory", function($idcategory){
 	
 });
 
-$app->get("/categories/:idcategory", function($idcategory){
-
+// Rota da página de relacionamento de produtos com categoria
+$app->get("/admin/categories/:idcategory/products", function($idcategory){
+	
+	User::verifyLogin();
+	
 	$category = new Category();
 	
 	$category->get((int)$idcategory);
 	
-	$page = new Page();
+	$page = new PageAdmin();
 	
-	$page->setTpl("category", [
+	$page->setTpl("categories-products", [
 		"category"=>$category->getValues(),
-		"products"=>[]
+		"productsRelated"=>$category->getProducts(true),
+		"productsNotRelated"=>$category->getProducts(false)
 	]);
-	
+});
 
+// Rota do menu categorias para categorizar (adicionar em uma categoria) um produto
+$app->get("/admin/categories/:idcategory/products/:idproduct/add", function($idcategory, $idproduct){
+	
+	User::verifyLogin();
+	
+	$category = new Category();
+	
+	$category->get((int)$idcategory);
+
+	$product = new Product();
+	
+	$product->get((int)$idproduct);
+	
+	$category->addProduct($product);
+	
+	header("Location: /admin/categories/".$idcategory."/products");
+	
+	exit;
+	
+});
+
+// Rota do menu categorias para descategorizar um produto (remover um produto de uma categoria) 
+$app->get("/admin/categories/:idcategory/products/:idproduct/remove", function($idcategory, $idproduct){
+	
+	User::verifyLogin();
+	
+	$category = new Category();
+	
+	$category->get((int)$idcategory);
+
+	$product = new Product();
+	
+	$product->get((int)$idproduct);
+	
+	$category->removeProduct($product);
+	
+	header("Location: /admin/categories/".$idcategory."/products");
+
+	exit;	
 });
 
 ?>

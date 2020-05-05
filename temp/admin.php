@@ -1,7 +1,9 @@
 <?php
 
-use \Hcode\PageAdmin;
-use \Hcode\Model\User;
+///////////////////////////////////////////////////////////////////
+// ROTA PARA OS ARQUIVOS DO ADMIN
+///////////////////////////////////////////////////////////////////
+use \Slim\Slim;
 
 $app->get('/admin', function() {
 	
@@ -13,7 +15,7 @@ $app->get('/admin', function() {
 	
 });
 
-$app->get('/admin/login', function() {
+$app->get('/admin/login', function(){
 
 	$page = new PageAdmin([
 		"header"=>false,
@@ -25,7 +27,7 @@ $app->get('/admin/login', function() {
 });
 
 $app->post("/admin/login", function(){
-	
+
 	User::login($_POST["login"], $_POST["password"]);
 	
 	header("Location: /admin");
@@ -119,5 +121,6 @@ $app->post("/admin/forgot/reset", function(){
 	$page->setTpl("forgot-reset-success");	
 	
 });
+
 
 ?>
