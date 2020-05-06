@@ -268,6 +268,7 @@ $app->get("/checkout", function(){
 	}
 
 	if(!$address->getdesaddress()) $address->setdesaddress('');
+	if(!$address->getdesnumber()) $address->setdesnumber('');
 	if(!$address->getdescomplement()) $address->setdescomplement('');
 	if(!$address->getdesdistrict()) $address->setdesdistrict('');
 	if(!$address->getdescity()) $address->setdescity('');
@@ -976,7 +977,7 @@ $app->post('/admin/users/:iduser/password', function($iduser){
 	}	
 
 	$user = new User();
-	
+
 	$user->get((int)$iduser);
 
 	$user->setPassword(User::getPasswordHash($_POST['despassword']));
