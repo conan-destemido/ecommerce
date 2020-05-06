@@ -6,19 +6,17 @@
 	use \Hcode\Model;
 	use \Hcode\Mailer;
 	
-	define("SECRET"   , pack("a16", "BomMercadoAcheii"));
-	define("SECRET_IV", pack("a16", "BomMercadoAcheii"));
+	//define("SECRET"   , pack("a16", "BomMercadoAcheii"));
+	//define("SECRET_IV", pack("a16", "BomMercadoAcheii"));
 	
 	class User extends Model {
 		
-		const SESSION = "User";
-		
-		//
-		//const SECRET 	= "BomMercadoAcheii";
-		//const SECRET_IV = "BomMercadoAcheii";
-		const ERROR = 'UserError';
-		const ERROR_REGISTER = 'UserErrorRegister';
-		const SUCCESS = "UserSuccess";
+		const SESSION 			= "User";
+		const SECRET 			= "BomMercadoAcheii";
+		const SECRET_IV 		= "BomMercadoAcheii";
+		const ERROR 			= 'UserError';
+		const ERROR_REGISTER 	= 'UserErrorRegister';
+		const SUCCESS 			= "UserSuccess";
 				
 		
 		public static function getFromSession()
@@ -48,22 +46,22 @@
 				!(int)$_SESSION[User::SESSION]["iduser"] > 0 
 				)
 			{
-				
+
 				// Não está logado
 				return false;
 					
 			}else{
 			
 				if($inadmin === true && (bool)$_SESSION[User::SESSION]["inadmin"] === true){
-					
+
 					return true;
 					
 				}else if($inadmin === false){
-					
+
 					return true;
 					
 				}else{
-					
+
 					return false;
 					
 				}
@@ -126,12 +124,13 @@
 	 
 				if ($inadmin){
 					header("Location: /admin/login");
+					exit;
 				} else {
 					header("Location: /login");
+					exit;
 				}
 
 			}
-		
 		}
 		
 		public static function logout()
@@ -169,7 +168,8 @@
 		
 		public function get($iduser)
 		{
-			
+	
+
 			$sql = new Sql();
 			
 			$results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) WHERE a.iduser = :iduser",
@@ -178,7 +178,7 @@
 			));
 			
 			$data = $results[0];
-			
+		
 			$data['desperson'] = utf8_encode($data['desperson']);
 			
 			$this->setData($results[0]);
@@ -260,9 +260,9 @@
 					$code = openssl_encrypt(
 						$dataRecovery["idrecovery"],
 						"AES-128-CBC",
-						SECRET,
+						User::SECRET,
 						0,
-						SECRET_IV
+						User::SECRET_IV
 					);
 					
 					/* Para descriptografar em openssl 
@@ -297,7 +297,7 @@
 		public static function validForgotDecrypt($code)
 		{
 			
-			$idrecovery = openssl_decrypt($code, "AES-128-CBC", SECRET, 0, SECRET_IV);
+			$idrecovery = openssl_decrypt($code, "AES-128-CBC", User::SECRET, 0, User::SECRET_IV);
 		
 			$sql = new Sql();
 			
